@@ -78,38 +78,38 @@ echo $Header >> Site/Index.html
 
 
 # Active Directory Enumeration
+echo $header >> Site/AD.html
 try{
-    if((Get-WindowsFeature | ? DisplayName -match 'Active Directory Domain Services' | Select-Object -Property InstallState) -eq 'Installed'){
+    if((Get-WindowsFeature | ? DisplayName -match 'Active Directory Domain Services' | Select-Object -Property InstallState)){
+        try{
+            echo "<h1> ACTIVE DIRECTORY SERVER INFORMATION </h1>" >> Site/AD.html
+            echo "<br />" >> Site/AD.html
 
-        echo "<h1> ACTIVE DIRECTORY SERVER INFORMATION </h1>" >> Site/AD.html
-        echo "<br />" >> Site/AD.html
 
+            # Get Domain info
+            echo "<h1> DOMAIN INFORMATION </h1>" >> Site/AD.html
+            get-addomain | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
 
-        # Get Domain info
-        echo "<h1> DOMAIN INFORMATION </h1>" >> Site/AD.html
-        get-addomain | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
-
-        # Grab Users
-        echo "<h1> AD USERS </h1>" >> Site/AD.html
-        get-aduser -Filter * | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
+            # Grab Users
+            echo "<h1> AD USERS </h1>" >> Site/AD.html
+            get-aduser -Filter * | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
         
-        # Grab comps
-        echo "<h1> AD COMPUTERS </h1>" >> Site/AD.html
-        get-adcomputer -Filter * | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
+            # Grab comps
+            echo "<h1> AD COMPUTERS </h1>" >> Site/AD.html
+            get-adcomputer -Filter * | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
 
-        # Grab Groups
-        echo "<h1> AD GROUPS </h1>" >> Site/AD.html
-        get-adgroup -Filter * | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
+            # Grab Groups
+            echo "<h1> AD GROUPS </h1>" >> Site/AD.html
+            get-adgroup -Filter * | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
 
-        # Get all GPOs
-        echo "<h1> AD GROUP POLICY </h1>" >> Site/AD.html
-        get-GPO -Filter * | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
-
-        }else{
-            return
+            # Get all GPOs
+            echo "<h1> AD GROUP POLICY </h1>" >> Site/AD.html
+            get-GPO -Filter * | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
+            }catch{
+                echo "<h1> Credential Error </h1>" >> Site/AD.html
+            }
         }
 }catch{
-    echo $header >> Site/AD.html
     echo "<h1> ACTIVE DIRECTORY DOMAIN SERVICES NOT INSTALLED ON THIS DEVICE </h1>" >> Site/AD.html
     $break >> Site/AD.html
 }
