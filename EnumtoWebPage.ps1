@@ -6,6 +6,12 @@ Param($Name, $Device, $Comp)
 # Global def
 $global:Break = '<br />'
 
+# Try to create Site dir if it doesn't exist
+try{
+    mkdir Site
+}catch{
+}
+
 
 # Style & Header
 $Style = "<style>
@@ -36,37 +42,36 @@ $Date = "<h1> Enumeration Started $(Get-Date) </h1>"
 $Header = $Style + $Date + $Nav + $Author
 
 # Send header to index.html
-echo $Header >> Index.html
-
+echo $Header >> Site/Index.html
 
 # General information
 # Compatability with servers and workstations
 # Gets service and process information
 
 # Process information
-    echo $Header >> Processes.html
-    echo "<h1>PROCESSES</h1> " >> Processes.html
-    Get-CimInstance Win32_Process | Select-Object ProcessName, Path, CreationDate, CommandLine | ConvertTo-HTML -Fragment -As Table >> Processes.html
+    echo $Header >> Site/Processes.html
+    echo "<h1>PROCESSES</h1> " >> Site/Processes.html
+    Get-CimInstance Win32_Process | Select-Object ProcessName, Path, CreationDate, CommandLine | ConvertTo-HTML -Fragment -As Table >> Site/Processes.html
     # $break >> Enum.html
 
 # Service Information
-    echo $Header >> Services.html
-    echo "<h1> SERVICES </h1>" >> Services.html
-    Get-CimInstance Win32_Service | Select-Object Name, PathName, Caption, Description, State | ConvertTo-HTML -Fragment -As Table >> Services.html
+    echo $Header >> Site/Services.html
+    echo "<h1> SERVICES </h1>" >> Site/Services.html
+    Get-CimInstance Win32_Service | Select-Object Name, PathName, Caption, Description, State | ConvertTo-HTML -Fragment -As Table >> Site/Services.html
     # $break >> Enum.html
 
 # Local User information
-    $Header >> Local.html
-    echo "<h1> LOCAL USERS </h1>" >> Local.html
-    Get-LocalUser | Select-Object Name, Enabled, LastLogon, PasswordRequired, Description, SID | ConvertTo-HTML -Fragment >> Local.html
-    echo "<h1> LOCAL GROUPS </h1>" >> Local.html
-    Get-LocalGroup | Select-Object Name, Description, SID | ConvertTo-HTML -Fragment >> Local.html
+    $Header >> Site/Local.html
+    echo "<h1> LOCAL USERS </h1>" >> Site/Local.html
+    Get-LocalUser | Select-Object Name, Enabled, LastLogon, PasswordRequired, Description, SID | ConvertTo-HTML -Fragment >> Site/Local.html
+    echo "<h1> LOCAL GROUPS </h1>" >> Site/Local.html
+    Get-LocalGroup | Select-Object Name, Description, SID | ConvertTo-HTML -Fragment >> Site/Local.html
     # $break >> Enum.html
 
 # Task Information
-    echo $Header >> Tasks.html
-    echo "<h1> SCHEDULED TASKS </h1>" >> Tasks.html
-    Get-ScheduledTask |Select-Object TaskName, Author, State, Description, TaskPath | ConvertTo-HTML -Fragment -As Table >> Tasks.html
+    echo $Header >> Site/Tasks.html
+    echo "<h1> SCHEDULED TASKS </h1>" >> Site/Tasks.html
+    Get-ScheduledTask |Select-Object TaskName, Author, State, Description, TaskPath | ConvertTo-HTML -Fragment -As Table >> Site/Tasks.html
 
 
 
@@ -76,37 +81,37 @@ echo $Header >> Index.html
 try{
     if((Get-WindowsFeature | ? DisplayName -match 'Active Directory Domain Services' | Select-Object -Property InstallState) -eq 'Installed'){
 
-        echo "<h1> ACTIVE DIRECTORY SERVER INFORMATION </h1>" >> AD.html
-        echo "<br />" >> AD.html
+        echo "<h1> ACTIVE DIRECTORY SERVER INFORMATION </h1>" >> Site/AD.html
+        echo "<br />" >> Site/AD.html
 
 
         # Get Domain info
-        echo "<h1> DOMAIN INFORMATION </h1>" >> AD.html
-        get-addomain | ConvertTo-HTML -Fragment -As Table >> AD.html
+        echo "<h1> DOMAIN INFORMATION </h1>" >> Site/AD.html
+        get-addomain | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
 
         # Grab Users
-        echo "<h1> AD USERS </h1>" >> AD.html
-        get-aduser -Filter * | ConvertTo-HTML -Fragment -As Table >> AD.html
+        echo "<h1> AD USERS </h1>" >> Site/AD.html
+        get-aduser -Filter * | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
         
         # Grab comps
-        echo "<h1> AD COMPUTERS </h1>" >> AD.html
-        get-adcomputer -Filter * | ConvertTo-HTML -Fragment -As Table >> AD.html
+        echo "<h1> AD COMPUTERS </h1>" >> Site/AD.html
+        get-adcomputer -Filter * | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
 
         # Grab Groups
-        echo "<h1> AD GROUPS </h1>" >> AD.html
-        get-adgroup -Filter * | ConvertTo-HTML -Fragment -As Table >> AD.html
+        echo "<h1> AD GROUPS </h1>" >> Site/AD.html
+        get-adgroup -Filter * | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
 
         # Get all GPOs
-        echo "<h1> AD GROUP POLICY </h1>" >> AD.html
-        get-GPO -Filter * | ConvertTo-HTML -Fragment -As Table >> AD.html
+        echo "<h1> AD GROUP POLICY </h1>" >> Site/AD.html
+        get-GPO -Filter * | ConvertTo-HTML -Fragment -As Table >> Site/AD.html
 
         }else{
             return
         }
 }catch{
-    echo $header >> AD.html
-    echo "<h1> ACTIVE DIRECTORY DOMAIN SERVICES NOT INSTALLED ON THIS DEVICE </h1>" >> AD.html
-    $break >> AD.html
+    echo $header >> Site/AD.html
+    echo "<h1> ACTIVE DIRECTORY DOMAIN SERVICES NOT INSTALLED ON THIS DEVICE </h1>" >> Site/AD.html
+    $break >> Site/AD.html
 }
 
 
@@ -115,4 +120,4 @@ try{
 # Track page creation/features and generate a summary for the idex page
 echo "<div class=`"Summary`"><h1> Summary </h1>
 <p> Summary will go here when the code is finished. It will provide brief summaries of each generated page. </p>
-<p> Possibly excerpts as well.</p></div>" >> Index.html
+<p> Possibly excerpts as well.</p></div>" >> Site/Index.html
