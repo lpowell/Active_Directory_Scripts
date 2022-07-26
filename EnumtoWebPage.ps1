@@ -5,7 +5,7 @@ Param($Name, $Device, $Comp)
 
 # Global def
 $global:Break = '<br />'
-$global:ErrorActionPreference = 'SilentlyContinue'
+# $global:ErrorActionPreference = 'SilentlyContinue'
 
 # Try to create Site dir if it doesn't exist
 try{
@@ -33,6 +33,8 @@ td { font-size: 11px; padding: 5px 20px; color: #000; max-width: 600px; text-wra
 tr { background: #b8d1f3; }
 tr:nth-child(even){ background: #dae5f4; }
 p { text-align: center;}
+.Summary { margin: auto; overflow: hidden;}
+iframe { margin: auto; width: 1200; height: 400; display:block; border: 0px;}
 </style>"
 
 $Nav = "<table style=`"font-color: #000000;`"><tr><th><a href=`"Index.html`">Home</a></th><th><a href=`"Processes.html`"> Processes </a></th><th><a href=`"Services.html`"> Service </a></th><th><a href=`"Local.html`"> Local Accounts </a></th>`
@@ -58,8 +60,10 @@ $Header = $html + "<head>" + $Style + $Date + $Nav + $Author + "</head>"
 
 # Process information
      $Header + $Body >> Site/Processes.html
+     "<div id=Processes>" >> Site/Processes.html
      "<h1>PROCESSES</h1> " >> Site/Processes.html
     Get-CimInstance Win32_Process | Select-Object ProcessName, Path, CreationDate, CommandLine | ConvertTo-HTML -Fragment -As Table >> Site/Processes.html
+     "</div>" >> Site/Processes.html
      $End >> Site/Processes.html
 
 # Service Information
@@ -125,7 +129,8 @@ try{
 # Track page creation/features and generate a summary for the idex page
  "<div class=`"Summary`"><h1> Summary </h1>
 <p> Summary will go here when the code is finished. It will provide brief summaries of each generated page. </p>
-<p> Possibly excerpts as well.</p></div>" >> Site/Index.html
+<p> Possibly excerpts as well.</p>
+<iframe src=`"Processes.html#Processes`" title=`"Processes`" scrolling=`"no`"></iframe></div>" >> Site/Index.html
  $End >> Site/Index.html
 
 # Compress and backup Site dir
