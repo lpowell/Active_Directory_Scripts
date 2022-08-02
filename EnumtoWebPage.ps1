@@ -1,8 +1,16 @@
 # Enum to html 
 # Report info parameters
 # Please include: Name, Device name, Competition level 
-Param($Name, $Device, $Comp)
+Param($Name, $Device, $Comp, [switch]$Help)
 
+if($Help){
+    Write-Host 
+    Write-Host "Simple tool for enumeration report creation. Should be run alongside further enumeration tools."
+    Write-Host "Use with -Name, -Device, and -Comp to populate report author fields."
+    Write-Host "Backups will be created in the form of time stamped zip archives for export and review."
+    Write-Host 
+    exit
+}
 # Global def
 $global:Break = '<br />'
 # $global:ErrorActionPreference = 'SilentlyContinue'
@@ -32,10 +40,10 @@ a:link { color: #000000;}
 a:visited { color: #000000;}
 h1, h5, th { text-align: center; font-family: Segoe UI;}
 table { margin: auto; font-family: Segoe UI; box-shadow: 10px 10px 5px #888; border: thin ridge grey; }
-th { background: #0046c3; color: #fff; max-width: 400px; padding: 5px 10px; }
-td { font-size: 11px; padding: 5px 20px; color: #000; max-width: 600px; text-wrap:normal; word-wrap:break-word }
-tr { background: #b8d1f3; }
-tr:nth-child(even){ background: #dae5f4; }
+th { background: #0046c3; color: #fff; max-width: 400px; padding: 5px 10px; text-wrap:normal; word-wrap:break-word;}
+td { font-size: 11px; padding: 5px 20px; color: #000; max-width: 600px; text-wrap:normal; word-wrap:break-word; }
+tr { background: #b8d1f3; text-wrap:normal; word-wrap:break-word}
+tr:nth-child(even){ background: #dae5f4; text-wrap:normal; word-wrap:break-word;}
 p { text-align: center;}
 .Summary { margin: auto; overflow: hidden;}
 iframe { margin: auto; width: 1200; height: 400; display:block; border: 0px;}
@@ -76,22 +84,22 @@ $Header = $html + "<head>" + $Style + $Date + $Nav + $DivAuth + $Author + $DivEn
 # General information
 
 # Process information
-     $Header + $Body >> Site/Processes.html
-     # "<div id=Processes>" >> Site/Processes.html
-     $DivContent >> Site/Processes.html
-     "<h1>PROCESSES</h1> " >> Site/Processes.html
-     Get-CimInstance Win32_Process | Select-Object ProcessName, Path, CreationDate, CommandLine | ConvertTo-HTML -Fragment -As Table >> Site/Processes.html
-     "</div>" >> Site/Processes.html
-     $DivEnd >> Site/Processes.html
-     $End >> Site/Processes.html
+    $Header + $Body >> Site/Processes.html
+    # "<div id=Processes>" >> Site/Processes.html
+    $DivContent >> Site/Processes.html
+    "<h1>PROCESSES</h1> " >> Site/Processes.html
+    Get-CimInstance Win32_Process | Select-Object ProcessName, Path, CreationDate, CommandLine | ConvertTo-HTML -Fragment -As Table >> Site/Processes.html
+    "</div>" >> Site/Processes.html
+    $DivEnd >> Site/Processes.html
+    $End >> Site/Processes.html
 
 # Service Information
-     $Header + $Body >> Site/Services.html
-     $DivContent >> Site/Services.html
-     "<h1> SERVICES </h1>" >> Site/Services.html
-     Get-CimInstance Win32_Service | Select-Object Name, PathName, Caption, Description, State | ConvertTo-HTML -Fragment -As Table >> Site/Services.html
-     $DivEnd >> Site/Services.html
-     $End >> Site/Services.html
+    $Header + $Body >> Site/Services.html
+    $DivContent >> Site/Services.html
+    "<h1> SERVICES </h1>" >> Site/Services.html
+    Get-CimInstance Win32_Service | Select-Object Name, PathName, Caption, Description, State | ConvertTo-HTML -Fragment -As Table >> Site/Services.html
+    $DivEnd >> Site/Services.html
+    $End >> Site/Services.html
 
 # Local User information
     $Header + $Body >> Site/Local.html
