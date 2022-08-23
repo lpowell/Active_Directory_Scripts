@@ -13,7 +13,7 @@ if($Help){
 }
 # Global def
 $global:Break = '<br />'
-# $global:ErrorActionPreference = 'SilentlyContinue'
+$global:ErrorActionPreference = 'SilentlyContinue'
 
 # Try to create Site dir if it doesn't exist
 try{
@@ -50,7 +50,7 @@ iframe { margin: auto; width: 1200; height: 400; display:block; border: 0px;}
 </style>"
 
 $Nav = "<table style=`"font-color: #000000;`"><tr><th><a href=`"Index.html`">Home</a></th><th><a href=`"Processes.html`"> Processes </a></th><th><a href=`"Services.html`"> Services </a></th><th><a href=`"Local.html`"> Local Accounts </a></th>`
-<th><a href=`"Tasks.html`">Tasks</a></th><th><a href=`"Network.html`"> Network </a></th><th><a href=`"AD.html`">Active Directory</a></th></tr></table>"
+<th><a href=`"Tasks.html`">Tasks</a></th><th><a href=`"Network.html`"> Network </a></th><th><a href=`"AD.html`">Active Directory</a></th><th><a href=`"Files.html`"> Files </a></th></tr></table>"
 
 
 # Create divs
@@ -118,6 +118,14 @@ $Header = $html + "<head>" + $Style + $Date + $Nav + $DivAuth + $Author + $DivEn
     Get-ScheduledTask |Select-Object TaskName, Author, State, Description, TaskPath | ConvertTo-HTML -Fragment -As Table >> Site/Tasks.html
     $DivEnd >> Site/Tasks.html
     $End >> Site/Tasks.html
+
+# File Tree Information
+    $Header + $Body >> Site/Files.html
+    $DivContent >> Site/Files.html
+    "<h1> FILE SYSTEM </h1>" >> Site/Files.html
+    Get-ChildItem -recurse C:\ |Select-Object FullName, Extension, CreationTime, LastAccessTime | ConvertTo-HTML -Fragment -As Table >> Site/Files.html
+    $DivEnd >> Site/Files.html
+    $End >> Site/Files.html
 
 # Network information
 # Not compatible w/ devices older than Win 8
